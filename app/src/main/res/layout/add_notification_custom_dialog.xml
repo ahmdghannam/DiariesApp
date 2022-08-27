@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background"
+    >
+
+    <LinearLayout
+        android:id="@+id/texts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="date"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:textColor="@color/teal_700"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="time"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:textColor="@color/teal_700"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/pickers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/texts">
+
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:scaleY="0.8"
+            android:scaleX="0.8"
+            android:layout_marginLeft="-30dp"
+            android:layout_marginRight="-30dp"
+     />
+
+        <TimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:timePickerMode="spinner"
+            app:layout_constraintBottom_toBottomOf="@+id/datePicker"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/datePicker"
+            app:layout_constraintTop_toTopOf="@+id/datePicker"
+            android:scaleY="0.8"
+            android:scaleX="0.8"
+            android:layout_marginLeft="-30dp"
+            android:layout_marginRight="-30dp"
+            />
+    </LinearLayout>
+    <Button
+        android:id="@+id/btn_setNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/button_background"
+        android:padding="11dp"
+        android:text="set notification"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/pickers"
+        app:layout_constraintStart_toStartOf="@id/pickers"
+        app:layout_constraintTop_toBottomOf="@id/pickers"
+        android:layout_marginBottom="20dp"
+
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
