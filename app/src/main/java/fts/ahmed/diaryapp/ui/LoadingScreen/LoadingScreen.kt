@@ -16,12 +16,9 @@ class LoadingScreen : AppCompatActivity() {
         binding= ActivityLoadingScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-
         val animation=AnimationUtils.loadAnimation(applicationContext,R.anim.blink)
         binding.appTitle.startAnimation(animation)
         Handler().postDelayed({ initIntent() },1500)
-
-
     }
 
     private fun initIntent(){

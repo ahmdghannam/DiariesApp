@@ -1,9 +1,6 @@
 package fts.ahmed.diaryapp.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fts.ahmed.diaryapp.data.Repository.Repository
 import fts.ahmed.diaryapp.pojo.Diary
@@ -13,10 +10,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyViewModel @Inject constructor(private val repository: Repository) :ViewModel(){
+class MyViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     // all data
-    val allDiaries:LiveData<List<Diary>> =repository.getAllDiaries().asLiveData()
+    val allDiaries: LiveData<List<Diary>> = repository.getAllDiaries().asLiveData()
 
     //searched data
     private val _searchDiaries = MutableStateFlow<List<Diary>>(emptyList())
@@ -35,10 +32,21 @@ class MyViewModel @Inject constructor(private val repository: Repository) :ViewM
             repository.insert(diary)
         }
     }
-    fun delete (diary: Diary){
+
+    fun delete(diary: Diary) {
         viewModelScope.launch {
             repository.delete(diary)
         }
+    }
+
+
+    /// live data
+    val title: MutableLiveData<String> = MutableLiveData()
+    val body: MutableLiveData<String> = MutableLiveData()
+
+    fun initTitleAndBody(t: String, b: String) {
+        title.value = t
+        body.value = b
     }
 
 

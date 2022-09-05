@@ -7,9 +7,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import fts.ahmed.diaryapp.R
 import fts.ahmed.diaryapp.databinding.AddNotificationCustomDialogBinding
 import fts.ahmed.diaryapp.databinding.FragmentCreateDiaryBinding
 import fts.ahmed.diaryapp.pojo.Diary
@@ -24,23 +27,26 @@ class CreateDiaryFragment : Fragment() {
 
     lateinit var binding: FragmentCreateDiaryBinding
     lateinit var dialogBinding: AddNotificationCustomDialogBinding
-    private val viewModel: MyViewModel by viewModels()
+
+    private val viewModel: MyViewModel by activityViewModels()
+
     var alarm: Calendar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCreateDiaryBinding.inflate(layoutInflater)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_create_diary, container, false)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner // or this
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.fabSave.bringToFront()
         binding.fabNotify.bringToFront()
         notificationCreationLogic()
-        fabSaveClickListener()
         fabNotifyClickListener()
     }
 
@@ -69,6 +75,29 @@ class CreateDiaryFragment : Fragment() {
     }
 
     private fun btnSetNotificationClickListener(dialog: Dialog) {
+        fun createPendingIntent(): PendingIntent {
+            // usual intent
+            val intent = Intent(requireContext(), MyNotification::class.java)
+            intent.putExtra("titleExtra", binding.etTitle.text.toString())
+            intent.putExtra("messageExtra", binding.etTextBody.text.toString())
+            // pending intent
+            return PendingIntent.getBroadcast(
+                requireContext(),
+                notificationID,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+        fun scheduleNotification(time: Long) {
+            val pendingIntent = createPendingIntent()
+            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                time,
+                pendingIntent
+            )
+
+        }
         dialogBinding.btnSetNotification.setOnClickListener {
             val minute = dialogBinding.timePicker.minute
             val hour = dialogBinding.timePicker.hour
@@ -85,46 +114,20 @@ class CreateDiaryFragment : Fragment() {
         }
     }
 
-    private fun scheduleNotification(time:Long) {
-        val pendingIntent = createPendingIntent()
-        val alarmManager=requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
-        )
-
-    }
-
-    private fun createPendingIntent(): PendingIntent {
-        // usual intent
-        val intent = Intent(requireContext(), MyNotification::class.java)
-        intent.putExtra("titleExtra", binding.etTitle.text.toString())
-        intent.putExtra("messageExtra", binding.etTextBody.text.toString())
-        // pending intent
-        return PendingIntent.getBroadcast(
-            requireContext(),
-            notificationID,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-    }
-
     private fun notificationCreationLogic() {
+        fun createNotificationChannel(): NotificationChannel {
+            val channel = NotificationChannel(
+                channelID,
+                "dairy schedule",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            channel.description = "this notification specified by the user"
+            return channel
+        }
         val channel = createNotificationChannel()
         val notificationManager =
             requireContext().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
-    }
-
-    private fun createNotificationChannel(): NotificationChannel {
-        val channel = NotificationChannel(
-            channelID,
-            "dairy schedule",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        channel.description = "this notification specified by the user"
-        return channel
     }
 
     private fun dialogCustomization(dialog: Dialog) {
@@ -135,21 +138,21 @@ class CreateDiaryFragment : Fragment() {
         dialog.window?.attributes = lp
     }
 
-    private fun fabSaveClickListener() {
-        binding.fabSave.setOnClickListener {
-            val title = binding.etTitle.text.toString()
-            val text = binding.etTextBody.text.toString()
-            if (title.isEmpty()) {
-                Toast.makeText(
-                    requireContext(),
-                    "please fill the title at least",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                viewModel.insert(Diary(title = title, text = text, alarm = alarm?.timeInMillis))
-                Toast.makeText(requireContext(), "saved", Toast.LENGTH_SHORT).show()
-            }
+    override fun onStop() {
+        super.onStop()
+        val title = binding.etTitle.text.toString()
+        val text = binding.etTextBody.text.toString()
+
+        if (title.isEmpty()){
+            Toast.makeText(context, "the diary will not be saved, the title is empty", Toast.LENGTH_SHORT).show()
+
+        }else{
+            binding.etTitle.setText("")
+            binding.etTextBody.setText("")
+            viewModel.insert(Diary(title = title, text = text, alarm = alarm?.timeInMillis))
+            Toast.makeText(requireContext(), "saved", Toast.LENGTH_SHORT).show()
         }
+
     }
 
 }

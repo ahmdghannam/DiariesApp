@@ -23,16 +23,4 @@
         android:drawableRight="@drawable/ic_note"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="made with 🤍 by Ahmed Ali"
-        android:textSize="15sp"
-        android:textColor="@color/white"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,7 +22,9 @@ class DependencyInjectionModule {
             context.applicationContext
             ,LocalDataBase::class.java
             ,"students_database"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .fallbackToDestructiveMigration() // deletes all data when version changed 
+            .build()
     }
 
     @Provides

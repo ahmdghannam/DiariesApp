@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class Repository @Inject constructor(private val dao: DiariesDao) {
 
-    @Suppress("RedundantSuspendModifier")
+    @Suppress("RedundantSuspendModifier") // deletes the warnings
     @WorkerThread
     suspend fun insert(diary: Diary) {
         dao.insert(diary)
@@ -18,9 +18,11 @@ class Repository @Inject constructor(private val dao: DiariesDao) {
         dao.delete(diary)
     }
 
+
     fun getAllDiaries(): Flow<List<Diary>> {
         return dao.getAll()
     }
+
     fun searchDiary(searchKey:String): Flow<List<Diary>> {
         return dao.searchDiary(searchKey)
     }

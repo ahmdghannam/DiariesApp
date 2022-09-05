@@ -10,6 +10,9 @@
         android:name="fts.ahmed.diaryapp.ui.listDiaries.ListDiaryFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_list_diaries" >
+        <action
+            android:id="@+id/action_listDiaryFragment_to_createDiaryFragment"
+            app:destination="@id/createDiaryFragment" />
     </fragment>
     <fragment
         android:id="@+id/createDiaryFragment"
